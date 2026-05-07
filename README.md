@@ -29,5 +29,5 @@ This trend line helps identify "peak delay" hours during the day.
 
 
 
-## This dataset is growing in real-time. Currently analyzing 1,300+ records with plans to conduct a full weekly trend analysis once 10,000+ records are reached."
+## This dataset is growing in real-time. Currently analyzing 7000+ records with plans to conduct a full weekly trend analysis once 10,000+ records are reached."
 
