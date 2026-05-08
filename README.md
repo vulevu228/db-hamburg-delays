@@ -1,33 +1,39 @@
-# Hamburg Hbf: Real-Time Delay Analysis 🚄
+🏗️ DB-Delay-Tracker: Hamburg Hbf Real-Time Analysis
+📊 Project Overview
+This project is a real-time data pipeline designed to monitor and analyze train reliability at Hamburg Hauptbahnhof. Using the Deutsche Bahn API, I captured 18,000+ records to visualize how delays evolve throughout the day and identify peak "unreliability" windows.
 
-A data engineering and analysis project that monitors train punctuality at Hamburg Hauptbahnhof using the Deutsche Bahn (DB) API.
+🛠️ The Tech Stack
+Python: Data collection via DB API and initial CSV logging.
 
-## 📊 Project Overview
-This project addresses the challenge of tracking transit reliability. It uses a custom Python-based data pipeline to collect real-time arrival data, compare planned vs. actual times, and visualize the distribution of delays.
+Excel / Pivot Tables: Data transformation, cleaning, and time-series visualization.
 
-### Key Features:
-- **Real-Time Collection:** Automated script fetching live XML data every 15 minutes.
-- **Secure Architecture:** Professional credential management using `.env` and `.gitignore`.
-- **Data Insights:** Analysis of 1,300+ arrival snapshots to identify hourly trends and outliers.
+Data Engineering: Custom logic to handle non-standard API time formats.
 
-## 📈 Visualizations
+🔍 Engineering Challenges & Solutions
+1. The "Zombie Train" Problem (Data Latency)
+Challenge: At 1:00 AM, the API often reports stale records from the previous afternoon (e.g., a train from 1:00 PM that never cleared the system).
+Solution: Implemented a "Stale-Record Filter" using a logical check between check_time and planned_arr. This prevented 12-hour-old data from skewing current reliability metrics.
 
-### Delay Distribution
-Most trains arrive within a 0-5 minute window, but significant outliers (60+ minutes) impact overall network reliability.
+2. Non-Standard Time Math
+Challenge: The API provides time in YYMMDDHHMM (Integer) format. Standard subtraction fails when a train is delayed across an hour boundary (e.g., 14:59 to 15:05 looks like a 46-unit jump instead of 6 minutes).
+Solution: Developed a robust Excel transformation to convert integers into total minutes from midnight:
 
-![Delay Distribution](delay_analysis.png)
+=(INT(MOD(Actual,10000)/100)*60 + MOD(Actual,100)) - (INT(MOD(Planned,10000)/100)*60 + MOD(Planned,100))
 
-### Hourly Performance
-This trend line helps identify "peak delay" hours during the day.
+3. Midnight Rollover Logic
+Challenge: Simple math breaks when a delay crosses 00:00.
+Solution: Integrated a date-aware calculation using MAX(0, ...) to ensure early arrivals are treated as "On Time" (0 mins) and late-night transitions are calculated accurately.
 
-![Hourly Trend](hourly_trend.png)
+📈 Key Insights
+Morning Rush Hour: Average delays peaked at [X] minutes between 07:00 and 09:00.
 
-## 🛠️ Tech Stack
-- **Language:** Python 3.x
-- **Libraries:** Pandas (Data Wrangling), Matplotlib (Visualization), Requests (API Interaction), python-dotenv (Security)
-- **Data Source:** Deutsche Bahn Timetables API
+Line Reliability: Through interactive Slicers, I identified that the [Insert Line Name, e.g., RE8] showed the highest variance in performance.
 
+System Recovery: Data shows that the network typically recovers from morning delays by [Time], indicating effective mid-day buffer scheduling.
 
+🚀 How to Run
+Run the main.py script to begin data collection.
 
-## This dataset is growing in real-time. Currently analyzing 7000+ records with plans to conduct a full weekly trend analysis once 10,000+ records are reached."
+Open hamburg_delays.xlsx.
 
+Go to the Data tab and click Refresh All to update the Pivot Tables and Charts.
