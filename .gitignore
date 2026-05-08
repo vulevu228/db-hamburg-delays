@@ -1,4 +1,5 @@
 .env
-hamburg_delays.csv
-hamburg_delays - Copy.xlsx
+data/
+*.csv
+*.xlsx
 __pycache__/
